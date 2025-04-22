@@ -1,0 +1,129 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Open+Sans:wght@400;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 30 33% 93%;
+  --foreground: 20 14.3% 4.1%;
+  --muted: 60 4.8% 95.9%;
+  --muted-foreground: 25 5.3% 44.7%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 20 14.3% 4.1%;
+  --card: 0 0% 100%;
+  --card-foreground: 20 14.3% 4.1%;
+  --border: 20 5.9% 90%;
+  --input: 20 5.9% 90%;
+  --primary: 28 100% 45%;
+  --primary-foreground: 60 9.1% 97.8%;
+  --secondary: 43 100% 50%;
+  --secondary-foreground: 24 9.8% 10%;
+  --accent: 286 42% 36%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 60 9.1% 97.8%;
+  --ring: 28 100% 45%;
+  --radius: 0.5rem;
+  --chart-1: 28 100% 45%;
+  --chart-2: 43 100% 50%;
+  --chart-3: 286 42% 36%;
+  --chart-4: 200 90% 54%;
+  --chart-5: 120 100% 30%;
+  --sidebar-background: 0 0% 100%;
+  --sidebar-foreground: 20 14.3% 4.1%;
+  --sidebar-primary: 28 100% 45%;
+  --sidebar-primary-foreground: 60 9.1% 97.8%;
+  --sidebar-accent: 286 42% 36%;
+  --sidebar-accent-foreground: 0 0% 98%;
+  --sidebar-border: 20 5.9% 90%;
+  --sidebar-ring: 28 100% 45%;
+}
+
+.dark {
+  --background: 240 10% 3.9%;
+  --foreground: 0 0% 98%;
+  --muted: 240 3.7% 15.9%;
+  --muted-foreground: 240 5% 64.9%;
+  --popover: 240 10% 3.9%;
+  --popover-foreground: 0 0% 98%;
+  --card: 240 10% 3.9%;
+  --card-foreground: 0 0% 98%;
+  --border: 240 3.7% 15.9%;
+  --input: 240 3.7% 15.9%;
+  --primary: 28 100% 45%;
+  --primary-foreground: 0 0% 98%;
+  --secondary: 43 100% 50%;
+  --secondary-foreground: 240 5.9% 10%;
+  --accent: 286 42% 36%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 98%;
+  --ring: 28 100% 45%;
+  --chart-1: 28 100% 45%;
+  --chart-2: 43 100% 50%;
+  --chart-3: 286 42% 36%;
+  --chart-4: 200 90% 54%;
+  --chart-5: 120 100% 30%;
+  --sidebar-background: 240 10% 3.9%;
+  --sidebar-foreground: 0 0% 98%;
+  --sidebar-primary: 28 100% 45%;
+  --sidebar-primary-foreground: 0 0% 98%;
+  --sidebar-accent: 286 42% 36%;
+  --sidebar-accent-foreground: 0 0% 98%;
+  --sidebar-border: 240 3.7% 15.9%;
+  --sidebar-ring: 28 100% 45%;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-body antialiased bg-background text-foreground;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading;
+  }
+}
+
+/* Festive Special Styles */
+.festive-border {
+  position: relative;
+}
+
+.festive-border::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 8px;
+  background: repeating-linear-gradient(45deg, hsl(var(--primary)), hsl(var(--primary)) 10px, hsl(var(--secondary)) 10px, hsl(var(--secondary)) 20px);
+  border-radius: 4px 4px 0 0;
+}
+
+.diya-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 8c-1.105 0-2-.895-2-2s.895-2 2-2 2 .895 2 2-.895 2-2 2zm0 10c-1.105 0-2-.895-2-2s.895-2 2-2 2 .895 2 2-.895 2-2 2z' fill='%23E65100' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+}
+
+.rangoli-card:hover {
+  box-shadow: 0 10px 25px -5px rgba(var(--primary), 0.2);
+  transform: translateY(-5px);
+  transition: all 0.3s ease;
+}
+
+.sale-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: bold;
+  transform: rotate(5deg);
+  z-index: 10;
+}
