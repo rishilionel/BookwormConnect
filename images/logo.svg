@@ -1,0 +1,38 @@
+<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="logo-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF5F6D"/>
+      <stop offset="100%" stop-color="#FFC371"/>
+    </linearGradient>
+    <radialGradient id="flame-gradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+      <stop offset="0%" stop-color="#FFEB3B"/>
+      <stop offset="100%" stop-color="#FF9800"/>
+    </radialGradient>
+  </defs>
+  
+  <!-- Background Circle -->
+  <circle cx="100" cy="100" r="95" fill="url(#logo-gradient)"/>
+  <circle cx="100" cy="100" r="85" fill="#34495e"/>
+  
+  <!-- Diya Element -->
+  <g transform="translate(100, 110) scale(1.5)">
+    <!-- Diya Base -->
+    <ellipse cx="0" cy="0" rx="30" ry="12" fill="#d35400"/>
+    <ellipse cx="0" cy="-3" rx="25" ry="8" fill="#e67e22"/>
+    
+    <!-- Flame -->
+    <path d="M0,-3 Q -10,-20 0,-40 Q 10,-20 0,-3" fill="url(#flame-gradient)"/>
+    <ellipse cx="0" cy="-23" rx="4" ry="10" fill="#FFEB3B" opacity="0.7"/>
+  </g>
+  
+  <!-- Decorative Dots -->
+  <circle cx="65" cy="50" r="8" fill="#e74c3c"/>
+  <circle cx="135" cy="50" r="8" fill="#3498db"/>
+  <circle cx="50" cy="100" r="8" fill="#2ecc71"/>
+  <circle cx="150" cy="100" r="8" fill="#f1c40f"/>
+  <circle cx="65" cy="150" r="8" fill="#9b59b6"/>
+  <circle cx="135" cy="150" r="8" fill="#1abc9c"/>
+  
+  <!-- Text (stylized DD for DiwaliDelights) -->
+  <text x="100" y="190" font-family="Arial" font-size="24" font-weight="bold" text-anchor="middle" fill="white">DD</text>
+</svg>

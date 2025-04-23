@@ -1,8 +1,13 @@
-# DiwaliDelights - E-commerce Platform
+<div align="center">
+  <img src="images/logo.svg" alt="DiwaliDelights Logo" width="150">
+  <h1>DiwaliDelights - E-commerce Platform</h1>
+</div>
 
 A modern e-commerce web application for selling Diwali items, built with React, Express, and PostgreSQL.
 
-![DiwaliDelights](https://images.unsplash.com/photo-1604422230737-a31c4523ea68?ixlib=rb-4.0.3&w=1200&h=400&fit=crop&crop=center)
+<div align="center">
+  <img src="images/banner.svg" alt="DiwaliDelights Banner" width="800">
+</div>
 
 ## 🎆 Features
 
@@ -157,17 +162,19 @@ A modern e-commerce web application for selling Diwali items, built with React, 
 
 ## 📱 Screenshots
 
-### Home Page
-![Home Page](https://images.unsplash.com/photo-1604422230737-a31c4523ea68?ixlib=rb-4.0.3&w=600&h=400&fit=crop&crop=center)
+<div align="center">
+  <h3>Home Page</h3>
+  <img src="images/banner.svg" alt="Home Page" width="600">
 
-### Product Listing
-![Product Listing](https://images.unsplash.com/photo-1605696005660-83852c140bde?ixlib=rb-4.0.3&w=600&h=400&fit=crop&crop=center)
+  <h3>Product Listing</h3>
+  <img src="images/product-listing.svg" alt="Product Listing" width="600">
 
-### Product Detail
-![Product Detail](https://images.unsplash.com/photo-1604422744102-3b0c4e44b873?ixlib=rb-4.0.3&w=600&h=400&fit=crop&crop=center)
+  <h3>Product Detail</h3>
+  <img src="images/product-detail.svg" alt="Product Detail" width="600">
 
-### Shopping Cart
-![Shopping Cart](https://images.unsplash.com/photo-1601286794092-d7e3215ba03d?ixlib=rb-4.0.3&w=600&h=400&fit=crop&crop=center)
+  <h3>Shopping Cart</h3>
+  <img src="images/shopping-cart.svg" alt="Shopping Cart" width="600">
+</div>
 
 ## 🔄 Future Enhancements
 

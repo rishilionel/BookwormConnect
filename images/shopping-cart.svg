@@ -1,0 +1,52 @@
+<svg width="600" height="400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2ecc71"/>
+      <stop offset="100%" stop-color="#2c3e50"/>
+    </linearGradient>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#bg-gradient)"/>
+  
+  <!-- Cart Header -->
+  <rect x="50" y="30" width="500" height="60" rx="10" fill="white" opacity="0.9"/>
+  <text x="300" y="70" font-family="Arial" font-size="24" font-weight="bold" text-anchor="middle">Your Shopping Cart (3 items)</text>
+  
+  <!-- Cart Items Container -->
+  <rect x="50" y="110" width="500" height="200" rx="10" fill="white" opacity="0.9"/>
+  
+  <!-- Cart Item 1 -->
+  <g transform="translate(70, 130)">
+    <rect width="460" height="50" rx="5" fill="#ecf0f1"/>
+    <rect x="10" y="5" width="40" height="40" fill="#e74c3c"/>
+    <text x="70" y="30" font-family="Arial" font-size="16">Handcrafted Clay Diyas</text>
+    <text x="350" y="30" font-family="Arial" font-size="16" text-anchor="end">₹349 × 2</text>
+    <text x="450" y="30" font-family="Arial" font-size="16" font-weight="bold" text-anchor="end">₹698</text>
+  </g>
+  
+  <!-- Cart Item 2 -->
+  <g transform="translate(70, 190)">
+    <rect width="460" height="50" rx="5" fill="#ecf0f1"/>
+    <rect x="10" y="5" width="40" height="40" fill="#3498db"/>
+    <text x="70" y="30" font-family="Arial" font-size="16">LED String Lights</text>
+    <text x="350" y="30" font-family="Arial" font-size="16" text-anchor="end">₹599 × 1</text>
+    <text x="450" y="30" font-family="Arial" font-size="16" font-weight="bold" text-anchor="end">₹599</text>
+  </g>
+  
+  <!-- Cart Item 3 -->
+  <g transform="translate(70, 250)">
+    <rect width="460" height="50" rx="5" fill="#ecf0f1"/>
+    <rect x="10" y="5" width="40" height="40" fill="#9b59b6"/>
+    <text x="70" y="30" font-family="Arial" font-size="16">Rangoli Stencil Kit</text>
+    <text x="350" y="30" font-family="Arial" font-size="16" text-anchor="end">₹249 × 1</text>
+    <text x="450" y="30" font-family="Arial" font-size="16" font-weight="bold" text-anchor="end">₹249</text>
+  </g>
+  
+  <!-- Order Summary -->
+  <rect x="50" y="330" width="500" height="50" rx="10" fill="white" opacity="0.9"/>
+  <text x="100" y="365" font-family="Arial" font-size="18">Total:</text>
+  <text x="450" y="365" font-family="Arial" font-size="22" font-weight="bold" text-anchor="end">₹1,546</text>
+  
+  <!-- Checkout Button -->
+  <rect x="360" y="330" width="190" height="50" rx="25" fill="#e74c3c"/>
+  <text x="455" y="362" font-family="Arial" font-size="18" font-weight="bold" fill="white" text-anchor="middle">CHECKOUT</text>
+</svg>
