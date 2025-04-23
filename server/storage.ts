@@ -4,6 +4,8 @@ import {
   Product, InsertProduct, products,
   CartItem, InsertCartItem, cartItems
 } from "@shared/schema";
+import { db } from "./db";
+import { eq, and, ilike, or, count } from "drizzle-orm";
 
 // Storage interface for all CRUD operations
 export interface IStorage {
@@ -418,4 +420,361 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+export class DatabaseStorage implements IStorage {
+  async getUser(id: number): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user || undefined;
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user || undefined;
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    const [user] = await db
+      .insert(users)
+      .values(insertUser)
+      .returning();
+    return user;
+  }
+
+  async getAllCategories(): Promise<Category[]> {
+    return db.select().from(categories);
+  }
+
+  async getCategoryById(id: number): Promise<Category | undefined> {
+    const [category] = await db.select().from(categories).where(eq(categories.id, id));
+    return category || undefined;
+  }
+
+  async getCategoryBySlug(slug: string): Promise<Category | undefined> {
+    const [category] = await db.select().from(categories).where(eq(categories.slug, slug));
+    return category || undefined;
+  }
+
+  async createCategory(insertCategory: InsertCategory): Promise<Category> {
+    const [category] = await db
+      .insert(categories)
+      .values(insertCategory)
+      .returning();
+    return category;
+  }
+
+  async getAllProducts(): Promise<Product[]> {
+    return db.select().from(products);
+  }
+
+  async getProductById(id: number): Promise<Product | undefined> {
+    const [product] = await db.select().from(products).where(eq(products.id, id));
+    return product || undefined;
+  }
+
+  async getProductBySlug(slug: string): Promise<Product | undefined> {
+    const [product] = await db.select().from(products).where(eq(products.slug, slug));
+    return product || undefined;
+  }
+
+  async getProductsByCategory(categoryId: number): Promise<Product[]> {
+    return db
+      .select()
+      .from(products)
+      .where(eq(products.categoryId, categoryId));
+  }
+
+  async getProductsByCategorySlug(slug: string): Promise<Product[]> {
+    const category = await this.getCategoryBySlug(slug);
+    if (!category) return [];
+    return this.getProductsByCategory(category.id);
+  }
+
+  async searchProducts(query: string): Promise<Product[]> {
+    const lowerQuery = `%${query.toLowerCase()}%`;
+    return db
+      .select()
+      .from(products)
+      .where(
+        or(
+          ilike(products.name, lowerQuery),
+          ilike(products.description, lowerQuery)
+        )
+      );
+  }
+
+  async getFeaturedProducts(): Promise<Product[]> {
+    return db
+      .select()
+      .from(products)
+      .where(eq(products.isFeatured, true));
+  }
+
+  async getTrendingProducts(): Promise<Product[]> {
+    return db
+      .select()
+      .from(products)
+      .where(eq(products.isTrending, true));
+  }
+
+  async createProduct(insertProduct: InsertProduct): Promise<Product> {
+    const [product] = await db
+      .insert(products)
+      .values(insertProduct)
+      .returning();
+    return product;
+  }
+
+  async getCartItemsBySessionId(sessionId: string): Promise<CartItem[]> {
+    return db
+      .select()
+      .from(cartItems)
+      .where(eq(cartItems.sessionId, sessionId));
+  }
+
+  async getCartItemWithProduct(sessionId: string, productId: number): Promise<CartItem | undefined> {
+    const [item] = await db
+      .select()
+      .from(cartItems)
+      .where(
+        and(
+          eq(cartItems.sessionId, sessionId),
+          eq(cartItems.productId, productId)
+        )
+      );
+    return item || undefined;
+  }
+
+  async addItemToCart(insertCartItem: InsertCartItem): Promise<CartItem> {
+    // Check if item already exists in cart
+    const existingItem = await this.getCartItemWithProduct(
+      insertCartItem.sessionId,
+      insertCartItem.productId
+    );
+
+    if (existingItem) {
+      // Update quantity instead of adding new item
+      const updatedItem = await this.updateCartItemQuantity(
+        existingItem.id,
+        existingItem.quantity + insertCartItem.quantity
+      );
+      if (!updatedItem) {
+        throw new Error("Failed to update cart item");
+      }
+      return updatedItem;
+    }
+
+    // Add new item to cart
+    const [cartItem] = await db
+      .insert(cartItems)
+      .values({
+        ...insertCartItem,
+        createdAt: new Date()
+      })
+      .returning();
+    
+    return cartItem;
+  }
+
+  async updateCartItemQuantity(id: number, quantity: number): Promise<CartItem | undefined> {
+    // If quantity is 0 or less, remove the item
+    if (quantity <= 0) {
+      await this.removeCartItem(id);
+      return undefined;
+    }
+
+    const [updatedItem] = await db
+      .update(cartItems)
+      .set({ quantity })
+      .where(eq(cartItems.id, id))
+      .returning();
+    
+    return updatedItem || undefined;
+  }
+
+  async removeCartItem(id: number): Promise<void> {
+    await db
+      .delete(cartItems)
+      .where(eq(cartItems.id, id));
+  }
+
+  async clearCart(sessionId: string): Promise<void> {
+    await db
+      .delete(cartItems)
+      .where(eq(cartItems.sessionId, sessionId));
+  }
+
+  // Method to seed initial data
+  async seedInitialData(): Promise<void> {
+    // Check if data already exists
+    const categoriesCount = await db.select({ count: count() }).from(categories);
+    if (categoriesCount[0].count > 0) {
+      console.log("Database already seeded, skipping...");
+      return;
+    }
+
+    // Add Categories
+    const categoryData = [
+      {
+        name: "Diyas & Candles",
+        slug: "diyas-candles",
+        description: "Traditional & Modern Designs",
+        imageUrl: "https://images.unsplash.com/photo-1604422230737-a31c4523ea68?ixlib=rb-4.0.3",
+      },
+      {
+        name: "Rangoli & Colors",
+        slug: "rangoli-colors",
+        description: "Beautiful Floor Decorations",
+        imageUrl: "https://images.unsplash.com/photo-1598431429388-7a5dbb6c3c8a?ixlib=rb-4.0.3",
+      },
+      {
+        name: "Home Decorations",
+        slug: "home-decorations",
+        description: "Lanterns, Lights & Hangings",
+        imageUrl: "https://images.unsplash.com/photo-1605696005660-83852c140bde?ixlib=rb-4.0.3",
+      },
+      {
+        name: "Gift Boxes",
+        slug: "gift-boxes",
+        description: "Premium Gift Collections",
+        imageUrl: "https://images.unsplash.com/photo-1582584564635-0d92662810a5?ixlib=rb-4.0.3",
+      }
+    ];
+
+    await db.insert(categories).values(categoryData);
+    const allCategories = await db.select().from(categories);
+    
+    // Map of category slug to ID
+    const categoryMap = new Map<string, number>();
+    allCategories.forEach(cat => {
+      categoryMap.set(cat.slug, cat.id);
+    });
+
+    // Add Products
+    const productData = [
+      {
+        name: "Handcrafted Clay Diyas (Set of 6)",
+        slug: "handcrafted-clay-diyas",
+        description: "Beautiful handcrafted clay diyas perfect for Diwali celebrations. Each diya is handmade by skilled artisans.",
+        price: "349",
+        compareAtPrice: "410",
+        imageUrl: "https://images.unsplash.com/photo-1604422744102-3b0c4e44b873?ixlib=rb-4.0.3",
+        categoryId: categoryMap.get("diyas-candles") || 1,
+        isFeatured: true,
+        isTrending: false,
+        badge: "-15%",
+        stock: 50,
+        rating: "4.5",
+        reviewCount: 42,
+      },
+      {
+        name: "Decorative LED String Lights (10m)",
+        slug: "decorative-led-string-lights",
+        description: "Add a festive glow to your home with these beautiful LED string lights. Perfect for Diwali decorations.",
+        price: "599",
+        compareAtPrice: null,
+        imageUrl: "https://images.unsplash.com/photo-1610848812882-784b7eb968ba?ixlib=rb-4.0.3",
+        categoryId: categoryMap.get("home-decorations") || 3,
+        isFeatured: true,
+        isTrending: false,
+        badge: null,
+        stock: 100,
+        rating: "5.0",
+        reviewCount: 87,
+      },
+      {
+        name: "Reusable Rangoli Stencil Kit",
+        slug: "reusable-rangoli-stencil-kit",
+        description: "Create beautiful rangoli designs easily with these reusable stencils. Perfect for beginners and experts alike.",
+        price: "249",
+        compareAtPrice: null,
+        imageUrl: "https://images.unsplash.com/photo-1564941727588-d31f95e117d1?ixlib=rb-4.0.3",
+        categoryId: categoryMap.get("rangoli-colors") || 2,
+        isFeatured: true,
+        isTrending: false,
+        badge: "New",
+        stock: 75,
+        rating: "4.0",
+        reviewCount: 23,
+      },
+      {
+        name: "Premium Diwali Gift Hamper",
+        slug: "premium-diwali-gift-hamper",
+        description: "Luxury gift hamper containing assorted sweets, dry fruits, diyas, and decorative items. Perfect gift for family and friends.",
+        price: "1499",
+        compareAtPrice: "1799",
+        imageUrl: "https://images.unsplash.com/photo-1601286794092-d7e3215ba03d?ixlib=rb-4.0.3",
+        categoryId: categoryMap.get("gift-boxes") || 4,
+        isFeatured: true,
+        isTrending: false,
+        badge: "Best Seller",
+        stock: 30,
+        rating: "4.5",
+        reviewCount: 143,
+      },
+      {
+        name: "Decorative Brass Puja Thali Set",
+        slug: "decorative-brass-puja-thali-set",
+        description: "Elegant brass puja thali set complete with all the necessary items for Diwali puja rituals.",
+        price: "1299",
+        compareAtPrice: "1499",
+        imageUrl: "https://images.unsplash.com/photo-1605696612053-aa1b0e9d5167?ixlib=rb-4.0.3",
+        categoryId: categoryMap.get("home-decorations") || 3,
+        isFeatured: false,
+        isTrending: true,
+        badge: null,
+        stock: 25,
+        rating: "4.5",
+        reviewCount: 56,
+      },
+      {
+        name: "Hanging Metal Lanterns (Set of 3)",
+        slug: "hanging-metal-lanterns",
+        description: "Beautiful metal lanterns that add an elegant touch to your Diwali decorations. Available in gold finish.",
+        price: "899",
+        compareAtPrice: null,
+        imageUrl: "https://images.unsplash.com/photo-1605696914456-e635610d3d20?ixlib=rb-4.0.3",
+        categoryId: categoryMap.get("home-decorations") || 3,
+        isFeatured: false,
+        isTrending: true,
+        badge: null,
+        stock: 40,
+        rating: "4.0",
+        reviewCount: 38,
+      },
+      {
+        name: "Handmade Wall Decorations",
+        slug: "handmade-wall-decorations",
+        description: "Beautiful handcrafted wall hangings to add a festive touch to your home during Diwali celebrations.",
+        price: "749",
+        compareAtPrice: "999",
+        imageUrl: "https://images.unsplash.com/photo-1611464613261-5e7fef52fcbb?ixlib=rb-4.0.3",
+        categoryId: categoryMap.get("home-decorations") || 3,
+        isFeatured: false,
+        isTrending: true,
+        badge: null,
+        stock: 35,
+        rating: "5.0",
+        reviewCount: 72,
+      },
+      {
+        name: "Colorful Rangoli Powder Set",
+        slug: "colorful-rangoli-powder-set",
+        description: "Set of 10 vibrant colors to create beautiful rangoli designs for Diwali celebrations.",
+        price: "399",
+        compareAtPrice: "499",
+        imageUrl: "https://images.unsplash.com/photo-1598431429388-7a5dbb6c3c8a?ixlib=rb-4.0.3",
+        categoryId: categoryMap.get("rangoli-colors") || 2,
+        isFeatured: false,
+        isTrending: false,
+        badge: "-20%",
+        stock: 85,
+        rating: "4.5",
+        reviewCount: 63,
+      }
+    ];
+
+    await db.insert(products).values(productData);
+    console.log("Database seeded successfully!");
+  }
+}
+
+export const storage = new DatabaseStorage();
